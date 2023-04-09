@@ -31,7 +31,8 @@ class KNNClassifier(object):
         #     y_train.
         #  2. Save the number of classes as n_classes.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        x_train, y_train = next(iter(dl_train))
+        n_classes = torch.unique(y_train).shape[0]
         # ========================
 
         self.x_train = x_train
@@ -63,7 +64,8 @@ class KNNClassifier(object):
             #  - Set y_pred[i] to the most common class among them
             #  - Don't use an explicit loop.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            _, indices = torch.topk(dist_matrix[:,i], self.k, dim=0, largest=False)
+            y_pred[i], _ = torch.mode(self.y_train[indices])
             # ========================
 
         return y_pred
@@ -91,7 +93,15 @@ def l2_dist(x1: Tensor, x2: Tensor):
 
     dists = None
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    x1_squared = torch.sum(x1**2, dim=1)
+    x1_squared = torch.reshape(x1_squared, (x1.size(dim=0), 1))
+    x2_squared = torch.sum(x2**2, dim=1)
+    
+    dists = torch.sqrt(
+        x1_squared
+        - 2*x1@x2.T 
+        + x2_squared
+    )
     # ========================
 
     return dists
@@ -111,7 +121,7 @@ def accuracy(y: Tensor, y_pred: Tensor):
     # TODO: Calculate prediction accuracy. Don't use an explicit loop.
     accuracy = None
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    accuracy = torch.sum(y==y_pred) / y.size(dim=0) # get the fraction of correct predictions
     # ========================
 
     return accuracy

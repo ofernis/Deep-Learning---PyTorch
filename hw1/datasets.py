@@ -20,8 +20,11 @@ def random_labelled_image(
     # TODO:
     #  Implement according to the docstring description.
     # ====== YOUR CODE: ======
-    c, h, w = shape
-    image = (high - low) * torch.rand(c, h, w, dtype=dtype) + low
+    # c, h, w = shape
+    if dtype == torch.int:
+        image = torch.randint(low, high, shape)
+    else:
+        image = (high - low) * torch.rand(shape, dtype=dtype) + low
     label = int(torch.randint(num_classes, (1,)))
     # ========================
     return image, label
