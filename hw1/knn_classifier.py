@@ -141,7 +141,7 @@ def find_best_k(ds_train: Dataset, k_choices, num_folds):
 
     accuracies = []
 
-    for i, k in enumerate(k_choices):
+    for _, k in enumerate(k_choices):
         model = KNNClassifier(k)
         # TODO:
         #  Train model num_folds times with different train/val data.
@@ -151,25 +151,15 @@ def find_best_k(ds_train: Dataset, k_choices, num_folds):
         #  random split each iteration), or implement something else.
         # ====== YOUR CODE: ======
         current_accuracies = []
-        for j in range(num_folds):
+        for _ in range(num_folds):
             dl_train, dl_valid = dataloaders.create_train_validation_loaders(
                 ds_train, 1/num_folds)
             x_valid, y_valid = next(iter(dl_valid))
             model.train(dl_train)
             y_pred = model.predict(x_valid)
-            print(f"{accuracy(y_valid, y_pred).item()=}")
             current_accuracies.append(accuracy(y_valid, y_pred))
             
-        accuracies[i] = current_accuracies
-        # fold_size = len(ds_train) // num_folds
-        # for j in num_folds:
-        #     loader = dataloaders.create_train_validation_loaders(
-        #         ds_train, 1 / (num_folds - i)
-        #     knn_classifier = hw1knn.KNNClassifier(k=10)
-        #     knn_classifier.train(dl_train)
-        #     y_pred = knn_classifier.predict(x_test)
-        #     accuracy = hw1knn.accuracy(y_test, y_pred)
-            
+        accuracies.append(current_accuracies)    
         # ========================
 
     best_k_idx = np.argmax([np.mean(acc) for acc in accuracies])
