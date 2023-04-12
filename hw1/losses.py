@@ -51,23 +51,47 @@ class SVMHingeLoss(ClassifierLoss):
         #    for sample i and class j (i.e. s_j - s_{y_i} + delta).
 
         loss = None
+        # ====== LOTAN ATTEMPT: ======
+        lotan = False
+        if lotan:
+            # ====== YOUR CODE: ======
+            N = x_scores.shape[0]
+            
+            # Create matrix M
+            ground_scores = x_scores[torch.arange(N), y].reshape(-1, 1)
+            M = x_scores - ground_scores + self.delta
+            M[M == self.delta] = float('-inf')
+            
+            # Compute the hinge loss
+            L_i = torch.max(M, dim=1)[0]
+            L_i[L_i < 0] = 0
+            loss = torch.mean(L_i)
+            
+            # TODO: Save what you need for gradient calculation in self.grad_ctx
+            # ====== YOUR CODE: ======
+            self.grad_ctx['X'] = x
+            self.grad_ctx['margins'] = M
+            self.grad_ctx['y'] = y
+            # ========================
+            
+            return loss
+        # ========================
         # ====== YOUR CODE: ======
-        # print(x_scores)
-        M = x_scores - x_scores[y] + self.delta
-        print(M)
+        ground_scores = x_scores[range(x_scores.shape[0]), y]
+        ground_scores = torch.reshape(ground_scores, [ground_scores.shape[0], 1])
+        M = x_scores - ground_scores + self.delta
         M[M == self.delta] = 0
-        print(M)
-        M[M < 0]=0
-        print(M)
-        
-        N = x.shape[0]
+        M[M < 0] = 0
+       
+        N = x_scores.shape[0]
         loss = (1 / N) * torch.sum(M)
-        return loss
         # ========================
 
         # TODO: Save what you need for gradient calculation in self.grad_ctx
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.grad_ctx['X'] = x
+        self.grad_ctx['M'] = M
+        self.grad_ctx['y'] = y
         # ========================
 
         return loss
@@ -84,8 +108,36 @@ class SVMHingeLoss(ClassifierLoss):
         #  it create a matrix G such that X^T * G is the gradient.
 
         grad = None
+        # ====== LOTAN ATTEMPT: ======
+        lotan = False
+        if lotan:
+            # ====== YOUR CODE: ======
+            x = self.grad_ctx['X']
+            M = self.grad_ctx['M']
+            y = self.grad_ctx['y']
+            N, C = M.shape
+
+            # Compute the gradient
+            G = torch.zeros((N,C))
+            G[M > 0] = 1
+            G[torch.arange(N), y] -= torch.sum(G, dim=1)
+            grad = torch.matmul(x.T, G) / N
+
+            return grad 
+        # ========================
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        X = self.grad_ctx['X']
+        M = self.grad_ctx['M']
+        y = self.grad_ctx['y']
+        
+        G = (M > 0).float()
+        N = G.shape[0]       
+        non_zero_mask = (M != 0)
+
+        row_counts = -1 * torch.sum(non_zero_mask, dim=1)
+        G[range(N), y] = row_counts.float()
+        
+        grad = X.T @ G / N
         # ========================
 
-        return grad
+        return grad 
