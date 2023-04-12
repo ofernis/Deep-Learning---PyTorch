@@ -109,7 +109,6 @@ class LinearClassifier(object):
 
             # Evaluate the model on the entire training set (batch by batch)
             for train_inputs, train_labels in dl_train:
-                
                 # Make predictions for the current batch
                 train_outputs = self.predict(train_inputs)
                 # Compute the loss and its gradients
@@ -118,19 +117,14 @@ class LinearClassifier(object):
                 self.weights -= learn_rate * final_grad
 
                 # Gather data and report
-                running_loss += train_loss.item()
-                running_accuracy += self.evaluate_accuracy(train_labels, train_outputs[0])
+                batch_loss = train_loss.item()
+                batch_accuracy = self.evaluate_accuracy(train_labels, train_outputs[0])
+                running_loss += batch_loss
+                running_accuracy += batch_accuracy
                 
             N = len(dl_train)
-            average_loss = running_loss / N # loss per batch
+            average_loss = running_loss / N
             total_correct = running_accuracy / N
-            
-            # print(f"{N=}, {running_loss=}, {average_loss=}")
-            # print(f"{running_accuracy=}, {total_correct=}")
-            
-            train_res.loss.append(average_loss)
-            train_res.accuracy.append(total_correct)
-            
             running_loss = 0.
             running_accuracy = 0.
             
@@ -141,6 +135,8 @@ class LinearClassifier(object):
             valid_accur = self.evaluate_accuracy(valid_labels, valid_outputs[0])
             
             # Accumulate average loss and total accuracy for both sets
+            train_res.loss.append(average_loss)
+            train_res.accuracy.append(total_correct)
             valid_res.loss.append(valid_loss)
             valid_res.accuracy.append(valid_accur)
             # ========================
@@ -178,8 +174,8 @@ def hyperparams():
     #  Manually tune the hyperparameters to get the training accuracy test
     #  to pass.
     # ====== YOUR CODE: ======
-    hp['weight_std'] = 0.5
-    hp['learn_rate'] = 0.1
+    hp['weight_std'] = 0.05
+    hp['learn_rate'] = 0.05
     hp['weight_decay'] = 0.01
     # ========================
 
