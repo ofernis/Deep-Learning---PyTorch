@@ -66,13 +66,8 @@ part2_q2 = r"""
 part3_q1 = r"""
 **Your answer:**
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+The selection of $\Delta$ is arbitrary because it only affects the margin between the correct score and the incorrect scores.
+Thus, increasing or decreasing $\Delta$ will only shift the margin but will not affect the location of the minimum of the loss function.
 
 """
 
@@ -80,12 +75,13 @@ part3_q2 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+1. It seems like the SVM model is learning the general (or average) shape of each class (digit).
+We can see in the images that the bright area (corresponding to the higher weights) are formulating a similar shape (in most cases) to the digit shape.
+_This is espacially clear for digits '0', '1' and '3'._
+
+2. The similarity is that both models are comparing the new digit shape to the old ones (the train set).
+The difference is that kNN is comparing the new digit to its closest neigbors (which can be interpeted as the most similar shapes) and then labels the new digit by the majority.
+While the SVM model is learning an "average" digit for each digit 0-9 then comparing the new digit to these averages and selecting the most similar one.
 
 """
 
@@ -93,12 +89,14 @@ part3_q3 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+1. Based on the graph, we would say that the learning rate we chose ($0.05$) is *Good*.
+That's because the graph is showing a "nice" convergence to the minimum - the convergence is overall smooth and showing a steady decrease towadrs the minimum.
+- For *too high* learning rate, we would see big fluctuations on the graph, or even a divergence.
+- For *too low* learning rate, the learning curve would be smoother but it won't be able to reach the minimum at the given number of epochs.
+  
+2. Based on the graph, we would say that the model is *Slightly overfitted to the training set*.
+We can see that there is a small gap between the train curve and the validation curve in the graph,
+the train curve is slightly higher than the validation one, indicating that the model is not generalizing well.
 
 """
 

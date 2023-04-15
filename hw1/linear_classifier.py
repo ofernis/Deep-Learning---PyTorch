@@ -109,18 +109,18 @@ class LinearClassifier(object):
 
             # Evaluate the model on the entire training set (batch by batch)
             for train_inputs, train_labels in dl_train:
-                # Make predictions for the current batch
-                train_outputs = self.predict(train_inputs)
-                # Compute the loss and its gradients
-                train_loss = loss_fn(train_inputs, train_labels, train_outputs[1], train_outputs[0])
+                
+                train_pred, train_scores = self.predict(train_inputs)
+                
+                train_loss = loss_fn(train_inputs, train_labels, train_scores, train_pred).item()
+                train_reg = weight_decay * torch.pow(torch.norm(self.weights), 2)
+                running_loss += train_loss + train_reg
+                
+                batch_accuracy = self.evaluate_accuracy(train_labels, train_pred)
+                running_accuracy += batch_accuracy
+                
                 final_grad = loss_fn.grad() + (weight_decay * self.weights)
                 self.weights -= learn_rate * final_grad
-
-                # Gather data and report
-                batch_loss = train_loss.item()
-                batch_accuracy = self.evaluate_accuracy(train_labels, train_outputs[0])
-                running_loss += batch_loss
-                running_accuracy += batch_accuracy
                 
             N = len(dl_train)
             average_loss = running_loss / N
@@ -129,16 +129,26 @@ class LinearClassifier(object):
             running_accuracy = 0.
             
             # Evaluate on the validation set
-            valid_inputs, valid_labels = next(iter(dl_valid))
-            valid_outputs = self.predict(valid_inputs)
-            valid_loss = loss_fn(valid_inputs, valid_labels, valid_outputs[1], valid_outputs[0])
-            valid_accur = self.evaluate_accuracy(valid_labels, valid_outputs[0])
+            for valid_inputs, valid_labels in dl_valid:
+                
+                valid_pred, valid_scores = self.predict(valid_inputs)
+                
+                batch_loss = loss_fn(valid_inputs, valid_labels, valid_scores, valid_pred).item()
+                valid_reg = weight_decay * torch.pow(torch.norm(self.weights), 2)
+                running_loss += batch_loss + valid_reg
+                
+                batch_accuracy = self.evaluate_accuracy(valid_labels, valid_pred)
+                running_accuracy += batch_accuracy
+            
+            N = len(dl_valid)
+            valid_loss = running_loss / N
+            valid_accuracy = running_accuracy / N
             
             # Accumulate average loss and total accuracy for both sets
             train_res.loss.append(average_loss)
             train_res.accuracy.append(total_correct)
             valid_res.loss.append(valid_loss)
-            valid_res.accuracy.append(valid_accur)
+            valid_res.accuracy.append(valid_accuracy)
             # ========================
             print(".", end="")
 

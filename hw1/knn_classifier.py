@@ -121,7 +121,7 @@ def accuracy(y: Tensor, y_pred: Tensor):
     # TODO: Calculate prediction accuracy. Don't use an explicit loop.
     accuracy = None
     # ====== YOUR CODE: ======
-    accuracy = torch.sum(y==y_pred) / y.size(dim=0) # get the fraction of correct predictions
+    accuracy = torch.true_divide(torch.sum(y==y_pred), y.shape[0]) # get the fraction of correct predictions
     # ========================
 
     return accuracy
