@@ -51,42 +51,6 @@ class SVMHingeLoss(ClassifierLoss):
         #    for sample i and class j (i.e. s_j - s_{y_i} + delta).
 
         loss = None
-        # ====== LOTAN ATTEMPT: ======
-        lotan = False
-        if lotan:
-            # ====== YOUR CODE: ======
-            N = x_scores.shape[0]
-            
-            # # Create matrix M
-            # ground_scores = x_scores[torch.arange(N), y].reshape(-1, 1)
-            # M = x_scores - ground_scores + self.delta
-            # M[M == self.delta] = float('-inf')
-            
-            # # Compute the hinge loss
-            # L_i = torch.max(M, dim=1)[0]
-            # L_i[L_i < 0] = 0
-            # loss = torch.mean(L_i)
-            # Calculate margin-loss matrix
-            gt = x_scores[range(x_scores.shape[0]), y]
-            gt = torch.reshape(gt, [gt.shape[0], 1])
-            ground_scores = x_scores.gather(1, y.view(-1, 1))
-            M = x_scores - ground_scores + self.delta
-            # Zero out the margin loss for the correct class
-            M[M == self.delta] = 0
-            # Calculate the loss for each sample
-            loss_per_sample, _ = torch.max(M, dim=1)
-            # Compute the average loss over all samples
-            loss = torch.mean(loss_per_sample)
-            
-            # TODO: Save what you need for gradient calculation in self.grad_ctx
-            # ====== YOUR CODE: ======
-            self.grad_ctx['X'] = x
-            self.grad_ctx['M'] = M
-            self.grad_ctx['y'] = y
-            # ========================
-            
-            return loss
-        # ========================
         # ====== YOUR CODE: ======
         ground_scores = x_scores[range(x_scores.shape[0]), y]
         ground_scores = torch.reshape(ground_scores, [ground_scores.shape[0], 1])
@@ -119,23 +83,6 @@ class SVMHingeLoss(ClassifierLoss):
         #  it create a matrix G such that X^T * G is the gradient.
 
         grad = None
-        # ====== LOTAN ATTEMPT: ======
-        lotan = False
-        if lotan:
-            # ====== YOUR CODE: ======
-            x = self.grad_ctx['X']
-            M = self.grad_ctx['M']
-            y = self.grad_ctx['y']
-            N, C = M.shape
-
-            # Compute the gradient
-            G = torch.zeros((N,C))
-            G[M > 0] = 1
-            G[torch.arange(N), y] -= torch.sum(G, dim=1)
-            grad = torch.matmul(x.T, G) / N
-
-            return grad 
-        # ========================
         # ====== YOUR CODE: ======
         X = self.grad_ctx['X']
         M = self.grad_ctx['M']
