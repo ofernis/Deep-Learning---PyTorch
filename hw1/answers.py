@@ -45,7 +45,7 @@ part2_q1 = r"""
 
 
 Increasing _k_ should improve the model's test accuracy at first, but when we cross a certain threshold the accuracy will start to drop again.
-This is because for k=1 we get an over-fit model, which classify a sample by only it's closest neighbor and for $k\rightarrow\inf$ we get an under-fit model which decides an arbitrary decision rule by the majority label in the train set. 
+This is because for k=1 we get an over-fit model, which classify a sample by only it's closest neighbor and for $k\rightarrow\infty$ (when k exceeds the size of the set) we get an under-fit model which decides an arbitrary decision rule by the majority label in the train set. 
 
 """
 
