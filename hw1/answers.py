@@ -66,8 +66,8 @@ part2_q2 = r"""
 part3_q1 = r"""
 **Your answer:**
 
-The selection of $\Delta$ is arbitrary because it only affects the margin between the correct score and the incorrect scores.
-Thus, increasing or decreasing $\Delta$ will only shift the margin but will not affect the location of the minimum of the loss function.
+$\Delta$ is an hyperparameter that determines the minimum margin between the scores of the correct class and the scores of any incorrect class.
+thus, the choice of $\Delta$ is arbitrary because $\lambda$ can also control the margin size (generally, higher $\lambda$ = smaller margins) and balances the effect of $\Delta$.
 
 """
 
@@ -109,12 +109,19 @@ part4_q1 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+The ideal pattern to see in a residual plot is a flat line across the x axis.
+This is because that line means that all the residuals are 0.
+
+Comparing the 2 plots:
+| Plot                | MSE      | R2       |
+|-------------------- |----------|----------|
+| top-5               | 27.20    | 0.68     |
+| train after CV      | 7.04     | 0.92     |
+| test after CV       | 18.11    | 0.74     |
+
+In the plots, we can see that we have much less outliers outside the area of low residual error.
+Also, inside the low error zone we can see that the sample's error are relativly closer to 0 than before.
+On top of that, we can empirically see in the table above that we improved our MSE and R2 scores for both sets compared to the top-5 train set.
 
 """
 
@@ -122,25 +129,28 @@ part4_q2 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+1. This is still a linear regression. We transformed the features but the regression itself is still the same linear regression.
+(The regression line is still an hyperplane, but the number of dimensions has changed).
+
+2. In introduction to ML, we learned about the RBF kernel, which is a feature tranformation we can apply that is very expressive and can fit any non-linear function
+(but with the drawback of tendency to overfit).
+
+3. The decision boundry will still be an hyperplane, but it will be an hyperplane in the dimension of the tansformed features, and not the original ones.
+Thus, resulting a non-linear boundry in the original feature's plane.
 
 """
 
 part4_q3 = r"""
 **Your answer:**
 
+1. `np.logspace` allows us to creates a range of values that are evenly spaced on a logarithmic scale, while `np.linspace` creates a range of values that are evenly spaced on a linear scale.
+Using 'np.logspace' allows us to test different orders of magnitude for our parameters, making the search process much more useful and reducing the number of parameters to test.
+The advantages of CV is that it allows us to evaluate the parameter's performance on the test set without actually using the test set.
+Also, the CV calculates the mean performance on each fold and by that preventing the case of taking a "bad" validation set to check our parameters.
+By that, CV allows us to tune our parameters to be very close to the optimal ones. 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+2. The degree range was of length 3 and the lambda range was of length 20, so our grid search tested 60 combinations.
+Each of the combinations was trained and tested 3 times (once for each fold). resulting $3\cdot 20 \cdot 3 = 180$ fits for our model.
 
 """
 
